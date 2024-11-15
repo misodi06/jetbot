@@ -48,7 +48,8 @@ def cal_angle(x_pic, y_pic, focal):
     horizontal_angle = math.atan(x_pic/focal)
     return horizontal_angle, vertical_angle
 
-def cal_position(x_cam_world, y_cam_world, z_cam_world, angle_h, angle_v):
+# The function calculates the position of the Object in the world coordinate system
+def cal_position(x_cam_world, y_cam_world, z_cam_world, angle_h, angle_v, d):
     """
     Parameters
     :param x_cam_world: x coordinate of the camera in mm
@@ -56,8 +57,16 @@ def cal_position(x_cam_world, y_cam_world, z_cam_world, angle_h, angle_v):
     :param z_cam_world: z coordinate of the camera in mm
     :param angle_h: horizontal angle between the camera and the object in degrees
     :param angle_v: vertical angle between the camera and the object in degrees
+    :param d: distance from the camera to the object in mm
     :return: the position of the object in mm
     """
+    x_object_world = x_cam_world + d
+    y_object_world = y_cam_world + (math.tan(angle_h) * d)
+    z_object_world = z_cam_world + (math.tan(angle_v) * d)
+
+    return x_object_world, y_object_world, z_object_world
+
+# open cv
 
 
 
