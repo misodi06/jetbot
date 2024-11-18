@@ -60,7 +60,7 @@ def cal_position(x_cam_world, y_cam_world, z_cam_world, angle_h, angle_v, d):
     :param d: distance from the camera to the object in mm
     :return: the position of the object in mm
     """
-    x_object_world = x_cam_world + d
+    x_object_world = float(x_cam_world + d)
     y_object_world = y_cam_world + (math.tan(angle_h) * d)
     z_object_world = z_cam_world + (math.tan(angle_v) * d)
 
@@ -68,5 +68,24 @@ def cal_position(x_cam_world, y_cam_world, z_cam_world, angle_h, angle_v, d):
 
 # open cv
 
+def main():
+    # calibration of the focal length:
+    d = 100
+    h_pic = 10
+    h_real = 20
+    focal = cal_focal(d, h_pic, h_real)
+    distance = cal_distance(h_pic, h_real, focal)
+    angle_h, angle_v = cal_angle(distance, h_pic, h_real)
+    x_cam, y_cam, z_cam = 100, 150, 200
+    x,y,z = cal_position(x_cam, y_cam, z_cam, angle_h, angle_v, d)
+
+    print("Focal length: " + str(focal))
+    print("Distance: " + str(distance))
+    print("Horizontal angle: " + str(angle_h))
+    print("Vertical angle: " + str(angle_v))
+    print("Position: " + str(x) + ", " + str(y) + ", " + str(z))
+
+if __name__ == '__main__':
+    main()
 
 
