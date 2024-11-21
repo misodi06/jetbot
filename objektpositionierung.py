@@ -16,7 +16,7 @@ def cal_focal(distance, h_pic, h_real):
     """
     return distance * (h_pic / h_real)
 
-# The function calculates the distance between the camera and the objekt
+# The function calculates the distance between the camera and the object
 def cal_distance(h_pic, h_real, focal):
     """
     Parameters
@@ -48,17 +48,21 @@ def cal_angle(x_pic, y_pic, focal):
     horizontal_angle = math.atan(x_pic/focal)
     return horizontal_angle, vertical_angle
 
-# The function calculates the position of the Object in the world coordinate system
+# The function calculates the position of the object in the world coordinate system
 def cal_position(x_cam_world, y_cam_world, z_cam_world, angle_h, angle_v, d):
     """
     Parameters
-    :param x_cam_world: x coordinate of the camera in mm
-    :param y_cam_world: y coordinate of the camera in mm
-    :param z_cam_world: z coordinate of the camera in mm
-    :param angle_h: horizontal angle between the camera and the object in degrees
-    :param angle_v: vertical angle between the camera and the object in degrees
-    :param d: distance from the camera to the object in mm
-    :return: the position of the object in mm
+    ----------------------
+    x_cam_world: x coordinate of the camera in mm
+    y_cam_world: y coordinate of the camera in mm
+    z_cam_world: z coordinate of the camera in mm
+    angle_h: horizontal angle between the camera and the object in degrees
+    angle_v: vertical angle between the camera and the object in degrees
+    d: distance from the camera to the object in mm
+
+    Returns
+    ----------------------
+    returns the position of the object in mm
     """
     x_object_world = float(x_cam_world + d)
     y_object_world = y_cam_world + (math.tan(angle_h) * d)
