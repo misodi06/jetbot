@@ -16,7 +16,7 @@ def cal_focal(distance, h_pic, h_real):
     """
     return distance * (h_pic / h_real)
 
-# The function calculates the distance between the camera and the objekt
+# The function calculates the distance between the camera and the object
 def cal_distance(h_pic, h_real, focal):
     """
     Parameters
@@ -32,33 +32,42 @@ def cal_distance(h_pic, h_real, focal):
     return focal * (h_real / h_pic)
 
 # The function calculates the horizontal and vertical angle between the object and the camera
-def cal_angle(x_pic, y_pic, focal):
+def cal_angle(x_pic, y_pic, focal, camera_frame=[1080, 720]):
+    # the coordinate original point has to be clarified! e.g. middle point or left-up point.
     """
     Parameters
     -------------------
-    x_pic : the x coordinate of the object in pixel
-    y_pic : the y coordinate of the object in pixel
+    camera_frame: the image width and height, the default value is (1080x720)
+    x_pic : the x coordinate of the object in pixel, originally left-up point
+    y_pic : the y coordinate of the object in pixel, originally left-up point
     focal : the focal length of the camera in pixel
 
     Returns
     --------------------
-    returns the horizontal and vertical angle of the camera in degrees
+    horizontal_angle : the deflection angle in the horizon plane of the camera coordinate, positive value means left
+    vertical_angle : the deflection angle in the vertical plane of the camera coordinate, positive value means upon
     """
-    vertical_angle = math.atan(y_pic/focal)
-    horizontal_angle = math.atan(x_pic/focal)
+    err_x = camera_frame[0] / 2 - x_pic   # the error of pixel in the direction of x
+    err_y = camera_frame[1] / 2 - y_pic  # the error of pixel in the direction of y
+    horizontal_angle = math.atan(err_x/focal)
+    vertical_angle = math.atan(err_y/focal)
     return horizontal_angle, vertical_angle
 
-# The function calculates the position of the Object in the world coordinate system
+# The function calculates the position of the object in the world coordinate system
 def cal_position(x_cam_world, y_cam_world, z_cam_world, angle_h, angle_v, d):
     """
     Parameters
-    :param x_cam_world: x coordinate of the camera in mm
-    :param y_cam_world: y coordinate of the camera in mm
-    :param z_cam_world: z coordinate of the camera in mm
-    :param angle_h: horizontal angle between the camera and the object in degrees
-    :param angle_v: vertical angle between the camera and the object in degrees
-    :param d: distance from the camera to the object in mm
-    :return: the position of the object in mm
+    ----------------------
+    x_cam_world: x coordinate of the camera in mm
+    y_cam_world: y coordinate of the camera in mm
+    z_cam_world: z coordinate of the camera in mm
+    angle_h: horizontal angle between the camera and the object in degrees
+    angle_v: vertical angle between the camera and the object in degrees
+    d: distance from the camera to the object in mm
+
+    Returns
+    ----------------------
+    returns the position of the object in mm
     """
     x_object_world = float(x_cam_world + d)
     y_object_world = y_cam_world + (math.tan(angle_h) * d)
@@ -69,21 +78,29 @@ def cal_position(x_cam_world, y_cam_world, z_cam_world, angle_h, angle_v, d):
 # open cv
 
 def main():
-    # calibration of the focal length:
-    d = 100
-    h_pic = 10
-    h_real = 20
+    # calibration of the focal length with a known object:
+    print('calibrating the camera focal length:')
+    d = 20
+    h_pic = 1080
+    h_real = 6.5
     focal = cal_focal(d, h_pic, h_real)
-    distance = cal_distance(h_pic, h_real, focal)
-    angle_h, angle_v = cal_angle(distance, h_pic, h_real)
+    print("Focal length: " + str(focal))
+
+    # calculate the distance of unknown object 1
+    print('detecting the object 1: ')
+    h_pic2 = 435
+    h_real2 = 6.5
+    distance = cal_distance(h_pic2, h_real2, focal)
+    # angle_h, angle_v = cal_angle(distance, h_pic, h_real)
+    angle_h, angle_v = cal_angle(x_pic=1161, y_pic=1319, focal=focal, camera_frame=[1872,4032])
     x_cam, y_cam, z_cam = 100, 150, 200
     x,y,z = cal_position(x_cam, y_cam, z_cam, angle_h, angle_v, d)
 
-    print("Focal length: " + str(focal))
-    print("Distance: " + str(distance))
-    print("Horizontal angle: " + str(angle_h))
-    print("Vertical angle: " + str(angle_v))
-    print("Position: " + str(x) + ", " + str(y) + ", " + str(z))
+
+    print("Distance: " , distance)
+    print("Horizontal angle: ", angle_h)
+    print("Vertical angle: " , angle_v)
+    print("Position: " , x, y, z)
 
 if __name__ == '__main__':
     main()
