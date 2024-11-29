@@ -80,23 +80,28 @@ def cal_position(x_cam_world, y_cam_world, z_cam_world, angle_h, angle_v, d):
 def main():
     # calibration of the focal length with a known object:
     print('calibrating the camera focal length:')
-    d = 20
-    h_pic = 1080
-    h_real = 6.5
-    focal = cal_focal(d, h_pic, h_real)
-    print("Focal length: " + str(focal))
+    focal_cal = cal_focal(distance=20, h_pic=1080, h_real=6.5)
+    print("Focal length: ", focal_cal)
 
     # calculate the distance of unknown object 1
-    print('detecting the object 1: ')
-    h_pic2 = 435
-    h_real2 = 6.5
-    distance = cal_distance(h_pic2, h_real2, focal)
+    print('\ndetecting the object 1: ')
+    distance = cal_distance(h_pic=760, h_real=6.5, focal=focal_cal)
     # angle_h, angle_v = cal_angle(distance, h_pic, h_real)
-    angle_h, angle_v = cal_angle(x_pic=1161, y_pic=1319, focal=focal, camera_frame=[1872,4032])
+    angle_h, angle_v = cal_angle(x_pic=915, y_pic=1725, focal=focal_cal, camera_frame=[1872,4032])
     x_cam, y_cam, z_cam = 100, 150, 200
-    x,y,z = cal_position(x_cam, y_cam, z_cam, angle_h, angle_v, d)
+    x,y,z = cal_position(x_cam, y_cam, z_cam, angle_h, angle_v, distance)
+    print("Distance: " , distance)
+    print("Horizontal angle: ", angle_h)
+    print("Vertical angle: " , angle_v)
+    print("Position: " , x, y, z)
 
-
+    # calculate the distance of unknown object 2
+    print('\ndetecting the object 2: ')
+    distance = cal_distance(h_pic=433, h_real=6.5, focal=focal_cal)
+    # angle_h, angle_v = cal_angle(distance, h_pic, h_real)
+    angle_h, angle_v = cal_angle(x_pic=1161, y_pic=1319, focal=focal_cal, camera_frame=[1872,4032])
+    x_cam, y_cam, z_cam = 100, 150, 200
+    x,y,z = cal_position(x_cam, y_cam, z_cam, angle_h, angle_v, distance)
     print("Distance: " , distance)
     print("Horizontal angle: ", angle_h)
     print("Vertical angle: " , angle_v)
